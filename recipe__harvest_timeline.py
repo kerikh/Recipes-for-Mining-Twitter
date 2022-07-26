@@ -55,10 +55,10 @@ t = oauth_login()
 # Establish a connection to a CouchDB database
 
 server = couchdb.Server('http://localhost:5984')
-DB = 'tweets-%s-timeline' % (TIMELINE_NAME, )
+DB = f'tweets-{TIMELINE_NAME}-timeline'
 
 if USER:
-    DB = '%s-%s' % (DB, USER)
+    DB = f'{DB}-{USER}'
 
 try:
     db = server.create(DB)
@@ -92,29 +92,31 @@ except couchdb.http.PreconditionFailed, e:
     except IndexError, e:
         KW['since_id'] = 1
 
-api_call = getattr(t.statuses, TIMELINE_NAME + '_timeline')
+api_call = getattr(t.statuses, f'{TIMELINE_NAME}_timeline')
 tweets = make_twitter_request(t, api_call, **KW)
 db.update(tweets, all_or_nothing=True)
-print 'Fetched %i tweets' % len(tweets)
-
+api_call = getattr(t.statuses, TIMELINE_NAME + '_timeline')
 page_num = 1
 while page_num < MAX_PAGES and len(tweets) > 0:
 
     # Necessary for traversing the timeline in Twitter's v1.1 API:
     # Get the next query's max id parameter to pass in.
     # See https://dev.twitter.com/docs/working-with-timelines
-    KW['max_id'] = min([ tweet['id'] for tweet in tweets]) - 1 
+    KW['max_id'] = min(tweet['id'] for tweet in tweets) - 1 
 
-    api_call = getattr(t.statuses, TIMELINE_NAME + '_timeline')
+    api_call = getattr(t.statuses, f'{TIMELINE_NAME}_timeline')
     tweets = make_twitter_request(t, api_call, **KW)
-    
+
     # Actually storing tweets in CouchDB is as simple as passing them 
     # into a call to db.update
 
     db.update(tweets, all_or_nothing=True)
 
-    print >> sys.stderr, 'Fetched %i tweets' % (len(tweets),)
+    # Necessary for traversing the timeline in Twitter's v1.1 API:
+    # Get the next query's max id parameter to pass in.
+    # See https://dev.twitter.com/docs/working-with-timelines
+    KW['max_id'] = min([ tweet['id'] for tweet in tweets]) - 1 
 
     page_num += 1
 
-print >> sys.stderr, 'Done fetching tweets'
+api_call = getattr(t.statuses, TIMELINE_NAME + '_timeline')

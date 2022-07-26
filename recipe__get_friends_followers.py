@@ -42,6 +42,4 @@ if __name__ == '__main__':
         if len(ids) >= MAX_IDS:
             break
 
-    # Do something useful with the ids like store them to disk...
-
-    print ids 
+    # Do something useful with the ids like store them to disk... 

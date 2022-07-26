@@ -76,10 +76,7 @@ def entity_count_mapper(doc):
 # Count the frequencies of each entity
 
 def summing_reducer(keys, values, rereduce):
-    if rereduce:
-        return sum(values)
-    else:
-        return len(values)
+    return sum(values) if rereduce else len(values)
 
 
 # Creating a "view" in a "design document" is the mechanism that you use
@@ -120,12 +117,10 @@ html_page = open(HTML_TEMPLATE).read() % \
 if not os.path.isdir('out'):
     os.mkdir('out')
 
-f = open(os.path.join(os.getcwd(), 'out', os.path.basename(HTML_TEMPLATE)), 'w')
-f.write(html_page)
-f.close()
-
-print >> sys.stderr, 'Tagcloud stored in: %s' % f.name
+with open(os.path.join(os.getcwd(), 'out', os.path.basename(HTML_TEMPLATE)), 'w') as f:
+    f.write(html_page)
+weighted_output = [[i[0], i[1], weightTermByFreq(i[2])] for i in raw_output]
 
 # Open up the web page in your browser
 
-webbrowser.open("file://" + f.name)
+webbrowser.open(f"file://{f.name}")

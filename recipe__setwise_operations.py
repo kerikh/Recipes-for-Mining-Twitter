@@ -14,9 +14,9 @@ from recipe__oauth_login import oauth_login
 def get_redis_id(key_name, screen_name=None, user_id=None):
 
     if screen_name is not None:
-        return 'screen_name$' + screen_name + '$' + key_name
+        return f'screen_name${screen_name}${key_name}'
     elif user_id is not None:
-        return 'user_id$' + user_id + '$' + key_name
+        return f'user_id${user_id}${key_name}'
     else:
         raise Exception("No screen_name or user_id provided to get_redis_id")
 
