@@ -21,15 +21,12 @@ def write_protovis_output(g, out_file, html_template):
     nodes = g.nodes()
     indexed_nodes = {}
 
-    idx = 0
-    for n in nodes:
-        indexed_nodes.update([(n, idx,)])
-        idx += 1
-
-    links = []
-    for n1, n2 in g.edges():
-        links.append({'source' : indexed_nodes[n2], 
-                      'target' : indexed_nodes[n1]})
+    for idx, n in enumerate(nodes):
+        indexed_nodes |= [(n, idx,)]
+    links = [
+        {'source': indexed_nodes[n2], 'target': indexed_nodes[n1]}
+        for n1, n2 in g.edges()
+    ]
 
     json_data = json.dumps({"nodes" : [{"nodeName" : n} for n in nodes], \
                             "links" : links}, indent=4)
@@ -39,10 +36,9 @@ def write_protovis_output(g, out_file, html_template):
     if not os.path.isdir('out'):
         os.mkdir('out')
 
-    f = open(out_file, 'w')
-    f.write(html)
-    f.close()
-
+    with open(out_file, 'w') as f:
+        f.write(html)
+    nodes = g.nodes()
     print >> sys.stderr, 'Data file written to: %s' % f.name
 
 if __name__ == '__main__':
@@ -73,4 +69,4 @@ if __name__ == '__main__':
 
     write_protovis_output(g, f, HTML_TEMPLATE)
 
-    webbrowser.open('file://' + f)
+    webbrowser.open(f'file://{f}')

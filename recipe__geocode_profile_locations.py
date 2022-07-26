@@ -114,9 +114,15 @@ def build_kml(title, location2coords):
     </Placemark>"""
 
 
-    placemarks = []
-    for name, [lat, lon] in location2coords.items():
-        placemarks += [placemark_template % (name, lon, lat,)]
+    placemarks = [
+        placemark_template
+        % (
+            name,
+            lon,
+            lat,
+        )
+        for name, [lat, lon] in location2coords.items()
+    ]
 
     return kml_template % (title, '\n'.join(placemarks),)
 
@@ -150,10 +156,13 @@ if __name__ == '__main__':
     # Doing something interesting like building up some KML to visualize in Google Earth/Maps 
     # just involves some simple string munging...
 
-    kml = build_kml("Geocoded user profiles for Twitter search results for " + Q, location2coords)
+    kml = build_kml(
+        f"Geocoded user profiles for Twitter search results for {Q}",
+        location2coords,
+    )
+
 
     if not os.path.isdir('out'):
         os.mkdir('out')
-    f = open(os.path.join(os.getcwd(), 'out', Q + ".kml"), 'w')
-    f.write(kml)
-    f.close()
+    with open(os.path.join(os.getcwd(), 'out', f"{Q}.kml"), 'w') as f:
+        f.write(kml)

@@ -106,10 +106,7 @@ states_freqs = get_state_frequencies(locations)
 
 # Munge the data to the format expected by Protovis for Dorling Cartogram
 
-json_data = {}
-for state, freq in states_freqs.items():
-    json_data[state] = {'value': freq}
-
+json_data = {state: {'value': freq} for state, freq in states_freqs.items()}
 # Copy over some scripts for Protovis...
 # Our html template references some Protovis scripts, which we can
 # simply copy into out/
@@ -129,10 +126,9 @@ shutil.copytree('etc/protovis/protovis-3.2',
 html = open('etc/protovis/dorling_cartogram/dorling_cartogram.html').read() % \
         (json.dumps(json_data),)
 
-f = open(os.path.join(os.getcwd(), 'out', 'dorling_cartogram', 
-                      'dorling_cartogram.html'), 'w')
-f.write(html)
-f.close()
+with open(os.path.join(os.getcwd(), 'out', 'dorling_cartogram', 
+                      'dorling_cartogram.html'), 'w') as f:
+    f.write(html)
+Q = ' '.join(sys.argv[1:])
 
-print >> sys.stderr, 'Data file written to: %s' % f.name
-webbrowser.open('file://' + f.name)
+webbrowser.open(f'file://{f.name}')

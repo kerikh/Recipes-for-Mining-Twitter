@@ -14,15 +14,14 @@ if not os.path.isdir('out/trends_data'):
 
 while True:
 
-    now = str(datetime.datetime.now())
+        now = str(datetime.datetime.now())
 
-    trends = json.dumps(t.trends._(1)(), indent=1)
+        trends = json.dumps(t.trends._(1)(), indent=1)
 
-    f = open(os.path.join(os.getcwd(), 'out', 'trends_data', now), 'w')
-    f.write(trends)
-    f.close()
+        with open(os.path.join(os.getcwd(), 'out', 'trends_data', now), 'w') as f:
+                f.write(trends)
+        now = str(datetime.datetime.now())
 
-    print >> sys.stderr, "Wrote data file", f.name
-    print >> sys.stderr, "Zzz..."
+        now = str(datetime.datetime.now())
 
-    time.sleep(60) # 60 seconds
+        time.sleep(60) # 60 seconds
